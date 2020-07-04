@@ -26,9 +26,10 @@ def query():
 
 @app.route('/scrobble', methods = ['POST'])
 def scrobble():
-  if 'login' not in request.form:
+  pp.pprint(("Got request", request.form))
+  if 'login' not in request.form and request.form['login'] != '':
     return "Please provide at least a login"
-  if 'password' in request.form:
+  if 'password' in request.form and request.form['password'] != '':
     mkconfig(request.form)
   pp.pprint(("Starting mpdas", "...was", get_pids()))
   pid = run_mpdas(request.form)
