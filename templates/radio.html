@@ -1,0 +1,68 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width; maximum-scale=1; minimum-scale=1;" />
+  <title>Radio Memoricide</title>
+  <style>
+  input[type="password"], input[type="submit"], input[type="text"], textarea {
+    background-color: #666; 
+    color: #100;
+  }
+  </style>
+</head>
+<body style="background: #000; color: #900; font-variant: small-caps;">
+  <h1><strong id="current">...fetching</strong></h1>
+  <audio controls>
+    <!-- <source src="http://thoughtflare.memorici.de:22008" type="audio/mp3" /> -->
+    <source src="/substance" type="audio/mp3" />
+  </audio>
+  <div>
+    <input type="text" placeholder="Last.fm login" id="login" />
+    <input type="password" placeholder="password" id="password" />
+  </div>
+  <div>
+    <label style="color: #f00;"><input type="checkbox" style="opacity: 0.5;" id="save" /> save last.fm password</label></div>
+  <div><input type="submit" id="submit" value="Scrobble" /></div>
+</body>
+<script>
+eid = (argId) => document.getElementById(argId);
+
+window.setInterval(() => {
+  var xhr = new XMLHttpRequest();
+  var form = new FormData();
+  form.append("login", eid('login').value)
+  xhr.open('POST', '/current');
+  xhr.onload = () => eid('current').innerText = xhr.responseText;
+  xhr.send(form);
+}, 6666);
+
+start_scrobbling = () => {
+  var form = new FormData();
+  console.log(eid('login').value);
+  form.append("login", eid('login').value);
+  form.append("password", eid('password').value);
+  form.append("save", eid('save').checked);
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', '/scrobble');
+  xhr.onload = () => console.log(xhr.responseText);
+  xhr.send(form);
+  eid('submit').value = "Stop scrobbling";
+}
+
+stop_scrobbling = () => {
+  var form = new FormData();
+  console.log(eid('login').value);
+  form.append("login", eid('login').value);
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', '/stop');
+  xhr.onload = () => console.log(xhr.responseText);
+  xhr.send(form);
+  eid('submit').value = "Scrobble";
+}
+
+eid('submit').onclick = () => {
+  if(eid('submit').value === "Scrobble") start_scrobbling();
+  else                                   stop_scrobbling();
+}
+</script>
+</html>
